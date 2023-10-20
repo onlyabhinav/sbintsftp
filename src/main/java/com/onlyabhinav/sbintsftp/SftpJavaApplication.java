@@ -24,7 +24,6 @@ import org.springframework.messaging.MessagingException;
 
 import java.io.File;
 
-@SpringBootApplication
 public class SftpJavaApplication {
 
     public static void main(String[] args) {
@@ -33,49 +32,50 @@ public class SftpJavaApplication {
                 .run(args);
     }
 
-    @Bean
-    public DefaultSftpSessionFactory sftpSessionFactory() {
-        DefaultSftpSessionFactory factory = new DefaultSftpSessionFactory(true);
-        factory.setHost("localhost");
-        factory.setPort(22);
-        factory.setUser("tester");
-        factory.setPassword("password");
-        factory.setAllowUnknownKeys(true);
-       // factory.setTestSession(true);
-        return factory;
-    }
-
-    @Bean
-    public SftpInboundFileSynchronizer sftpInboundFileSynchronizer() {
-        SftpInboundFileSynchronizer fileSynchronizer = new SftpInboundFileSynchronizer(sftpSessionFactory());
-        fileSynchronizer.setDeleteRemoteFiles(false);
-        fileSynchronizer.setRemoteDirectory("hello");
-        fileSynchronizer.setFilter(new SftpSimplePatternFileListFilter("*.docx"));
-        return fileSynchronizer;
-    }
-
-    @Bean
-    @InboundChannelAdapter(channel = "sftpChannel", poller = @Poller(fixedDelay = "5000"))
-    public MessageSource<File> sftpMessageSource() {
-        SftpInboundFileSynchronizingMessageSource source =
-                new SftpInboundFileSynchronizingMessageSource(sftpInboundFileSynchronizer());
-        source.setLocalDirectory(new File("sftp-inbound"));
-        source.setAutoCreateLocalDirectory(true);
-        source.setLocalFilter(new AcceptOnceFileListFilter<>());
-        //source.setMaxFetchSize(1);
-        return source;
-    }
-
-    @Bean
-    @ServiceActivator(inputChannel = "sftpChannel")
-    public MessageHandler handler() {
-        return new MessageHandler() {
-
-            @Override
-            public void handleMessage(Message<?> message) throws MessagingException {
-                System.out.println(message.getPayload());
-            }
-
-        };
-    }
+//    @Bean
+//    public DefaultSftpSessionFactory sftpSessionFactory() {
+//        DefaultSftpSessionFactory factory = new DefaultSftpSessionFactory(true);
+//        factory.setHost("localhost");
+//        factory.setPort(22);
+//        factory.setUser("tester");
+//        factory.setPassword("password");
+//        factory.setAllowUnknownKeys(true);
+//       // factory.setTestSession(true);
+//        return factory;
+//    }
+//
+//    @Bean
+//    public SftpInboundFileSynchronizer sftpInboundFileSynchronizer() {
+//        SftpInboundFileSynchronizer fileSynchronizer = new SftpInboundFileSynchronizer(sftpSessionFactory());
+//        fileSynchronizer.setDeleteRemoteFiles(false);
+//        fileSynchronizer.setPreserveTimestamp(true);
+//        fileSynchronizer.setRemoteDirectory("hello");
+//        fileSynchronizer.setFilter(new SftpSimplePatternFileListFilter("*.docx"));
+//        return fileSynchronizer;
+//    }
+//
+//    @Bean
+//    @InboundChannelAdapter(channel = "sftpChannel", poller = @Poller(fixedDelay = "5000"))
+//    public MessageSource<File> sftpMessageSource() {
+//        SftpInboundFileSynchronizingMessageSource source =
+//                new SftpInboundFileSynchronizingMessageSource(sftpInboundFileSynchronizer());
+//        source.setLocalDirectory(new File("sftp-inbound"));
+//        source.setAutoCreateLocalDirectory(true);
+//        source.setLocalFilter(new AcceptOnceFileListFilter<>());
+//        //source.setMaxFetchSize(1);
+//        return source;
+//    }
+//
+//    @Bean
+//    @ServiceActivator(inputChannel = "sftpChannel")
+//    public MessageHandler handler() {
+//        return new MessageHandler() {
+//
+//            @Override
+//            public void handleMessage(Message<?> message) throws MessagingException {
+//                System.out.println(message.getPayload());
+//            }
+//
+//        };
+//    }
 }
